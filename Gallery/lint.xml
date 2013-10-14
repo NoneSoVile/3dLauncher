@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="NewApi" severity="ignore">
+        <ignore path="src/com/cooliris/media/GridInputProcessor.java" />
+    </issue>
+    <issue id="WrongCall">
+        <ignore path="src/com/cooliris/media/AppsLayer.java" />
+        <ignore path="src/com/cooliris/media/GridLayer.java" />
+    </issue>
+</lint>
