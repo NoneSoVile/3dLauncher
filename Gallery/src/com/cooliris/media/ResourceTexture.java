@@ -19,6 +19,8 @@ package com.cooliris.media;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.cooliris.app.App;
+
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -62,6 +64,7 @@ public final class ResourceTexture extends Texture {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             bitmap = BitmapFactory.decodeResource(rs, mResourceId, options);
+            //bitmap = Utils.resizeBitmap(view.getContext(), bitmap, (int)(72.0 * App.PIXEL_DENSITY));
         } else {
             InputStream inputStream = rs.openRawResource(mResourceId);
             if (inputStream != null) {

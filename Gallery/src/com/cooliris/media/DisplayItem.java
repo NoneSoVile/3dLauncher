@@ -125,11 +125,12 @@ public final class DisplayItem {
     }
 
     public Texture getThumbnailImage(Context context, MediaItemTexture.Config config) {
+    	ResourceTexture texture = mResourceImage;
     	if(mItemRef.iconID != 0){
-    		ResourceTexture texture = mResourceImage;
-    		if (texture == null && config != null) {
+    		
+    		if (texture == null) {
                 if (mItemRef.mId != Shared.INVALID) {
-                    texture = new ResourceTexture(mItemRef.iconID, true, mItemRef.packageName);
+                    texture = new ResourceTexture(mItemRef.iconID, false, mItemRef.packageName);
                 }
                 if (texture != null) {
                     texture.mIsScreennail = true;
@@ -138,39 +139,59 @@ public final class DisplayItem {
             }
     		return texture;
     	}
-        MediaItemTexture texture = mThumbnailImage;
-        if (texture == null && config != null) {
-            if (mItemRef.mId != Shared.INVALID) {
-                texture = new MediaItemTexture(context, config, mItemRef);
-            }
-            if (texture != null) {
-                texture.mIsScreennail = true;
-            }
-            mThumbnailImage = texture;
-        }
-        return texture;
+    	return texture;
+    	
+    	
+    	
+//        MediaItemTexture texture = mThumbnailImage;
+//        if (texture == null && config != null) {
+//            if (mItemRef.mId != Shared.INVALID) {
+//                texture = new MediaItemTexture(context, config, mItemRef);
+//            }
+//            if (texture != null) {
+//                texture.mIsScreennail = true;
+//            }
+//            mThumbnailImage = texture;
+//        }
+//        return texture;
     }
 
     public Texture getScreennailImage(Context context) {
-        Texture texture = mScreennailImage;
-        if (texture == null || texture.mState == Texture.STATE_ERROR) {
-            MediaSet parentMediaSet = mItemRef.mParentMediaSet;
-            if (parentMediaSet != null && parentMediaSet.mDataSource.getThumbnailCache() == LocalDataSource.sThumbnailCache) {
-                if (mItemRef.mId != Shared.INVALID && mItemRef.mId != 0) {
-                    texture = new MediaItemTexture(context, null, mItemRef);
-                } else if (mItemRef.mContentUri != null) {
-                    texture = new UriTexture(mItemRef.mContentUri);
+    	if(mItemRef.iconID != 0){
+    		Texture texture = mScreennailImage;
+    		if (texture == null) {
+                if (mItemRef.mId != Shared.INVALID) {
+                    texture = new ResourceTexture(mItemRef.iconID, false, mItemRef.packageName);
                 }
-            } else {
-                texture = new UriTexture(mItemRef.mScreennailUri);
-                ((UriTexture) texture).setCacheId(Utils.Crc64Long(mItemRef.mFilePath));
+                if (texture != null) {
+                    texture.mIsScreennail = true;
+                }
+                mScreennailImage = texture;
             }
-            if (texture != null) {
-                texture.mIsScreennail = true;
-            }
-            mScreennailImage = texture;
-        }
-        return texture;
+    		return texture;
+    	}
+    	else{
+    	       Texture texture = mScreennailImage;
+    	        if (texture == null || texture.mState == Texture.STATE_ERROR) {
+    	            MediaSet parentMediaSet = mItemRef.mParentMediaSet;
+    	            if (parentMediaSet != null && parentMediaSet.mDataSource.getThumbnailCache() == LocalDataSource.sThumbnailCache) {
+    	                if (mItemRef.mId != Shared.INVALID && mItemRef.mId != 0) {
+    	                    texture = new MediaItemTexture(context, null, mItemRef);
+    	                } else if (mItemRef.mContentUri != null) {
+    	                    texture = new UriTexture(mItemRef.mContentUri);
+    	                }
+    	            } else {
+    	                texture = new UriTexture(mItemRef.mScreennailUri);
+    	                ((UriTexture) texture).setCacheId(Utils.Crc64Long(mItemRef.mFilePath));
+    	            }
+    	            if (texture != null) {
+    	                texture.mIsScreennail = true;
+    	            }
+    	            mScreennailImage = texture;
+    	        }
+    	        return texture;
+    	}
+ 
     }
 
     public void clearScreennailImage() {
@@ -186,6 +207,7 @@ public final class DisplayItem {
 
     public void clearThumbnail() {
         mThumbnailImage = null;
+        mResourceImage = null;
     }
 
     /**
@@ -353,12 +375,12 @@ public final class DisplayItem {
 
     public final Texture getHiResImage(Context context) {
         UriTexture texture = mHiResImage;
-        if (texture == null) {
-            texture = new UriTexture(mItemRef.mContentUri);
-            texture.setCacheId(Utils.Crc64Long(mItemRef.mFilePath));
-            texture.mIsHiRes = true;
-            mHiResImage = texture;
-        }
+//        if (texture == null) {
+//            texture = new UriTexture(mItemRef.mContentUri);
+//            texture.setCacheId(Utils.Crc64Long(mItemRef.mFilePath));
+//            texture.mIsHiRes = true;
+//            mHiResImage = texture;
+//        }
         return texture;
     }
 

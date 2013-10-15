@@ -250,6 +250,8 @@ public final class RenderView extends GLSurfaceView implements GLSurfaceView.Ren
                         else
                             config = Bitmap.Config.RGB_565;
                     }
+                    
+                    config = Bitmap.Config.ARGB_8888;
                     Bitmap padded = Bitmap.createBitmap(paddedWidth, paddedHeight, config);
                     Canvas canvas = new Canvas(padded);
                     canvas.drawBitmap(bitmap, 0, 0, null);

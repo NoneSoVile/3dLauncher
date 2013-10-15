@@ -24,6 +24,7 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.cooliris.app.App;
 import com.cooliris.app.Res;
@@ -79,6 +80,7 @@ public final class GridDrawManager {
             }
         }
     };
+	private static final String TAG = "GridDrawManager";
 
     public GridDrawManager(Context context, GridCamera camera, GridDrawables drawables, DisplayList displayList,
             DisplayItem[] displayItems, DisplaySlot[] displaySlots) {
@@ -189,8 +191,8 @@ public final class GridDrawManager {
             if (itrSlotIndex == selectedSlotIndex) {
                 continue;
             }
-            view.prime(drawables.mTexturePlaceholder, true);
-            Texture placeholder = (state == GridLayer.STATE_GRID_VIEW) ? drawables.mTexturePlaceholder : null;
+            view.prime(drawables.mTexturePlaceholder, true);//view.prime(drawables.mTexturePlaceholder, true);
+            Texture placeholder = (state == GridLayer.STATE_GRID_VIEW) ? drawables.mTexturePlaceholder : null;//drawables.mTexturePlaceholder : null;
             final boolean pushDown = (state == GridLayer.STATE_GRID_VIEW || state == GridLayer.STATE_FULL_SCREEN) ? false : true;
             for (int j = 0; j < GridLayer.MAX_ITEMS_PER_SLOT; ++j) {
                 DisplayItem displayItem = displayItems[(index - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT + j];
@@ -483,8 +485,10 @@ public final class GridDrawManager {
         GridDrawables drawables = mDrawables;
 
         // We draw the frames around the drawn items.
+        
         boolean currentFocusIsPressed = mCurrentFocusIsPressed;
         if (state != GridLayer.STATE_FULL_SCREEN) {
+        /*
             GridDrawables.sFrame.bindArrays(gl);
             Texture texturePlaceHolder = (state == GridLayer.STATE_GRID_VIEW) ? drawables.mTextureGridFrame
                     : drawables.mTextureFrame;
@@ -505,7 +509,7 @@ public final class GridDrawManager {
                     if (!slotIsAlive) {
                         DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT];
                         if (displayItem != null) {
-                            drawDisplayItem(view, gl, displayItem, texturePlaceHolder, PASS_FRAME_PLACEHOLDER, null, 0);
+                            //drawDisplayItem(view, gl, displayItem, texturePlaceHolder, PASS_FRAME_PLACEHOLDER, null, 0);
                         }
                     }
                 }
@@ -546,12 +550,14 @@ public final class GridDrawManager {
                                     previousTexture = textureGrid;
                                 }
                             }
-                            //drawDisplayItem(view, gl, itemDrawn, textureToUse, PASS_FRAME, previousTexture, ratio);
+                            drawDisplayItem(view, gl, itemDrawn, textureToUse, PASS_FRAME, previousTexture, ratio);
                         }
                     }
                 }
             }
             GridDrawables.sFrame.unbindArrays(gl);
+            */
+            
             if (mSpreadValue <= 1.0f)
                 gl.glDepthFunc(GL10.GL_ALWAYS);
             if (state == GridLayer.STATE_MEDIA_SETS || state == GridLayer.STATE_TIMELINE) {
@@ -592,7 +598,7 @@ public final class GridDrawManager {
 
                     int x = (int) Math.floor((wWidth / 2) - (mNoItemsTexture.getWidth() / 2));
                     int y = (int) Math.floor((wHeight / 2) - (mNoItemsTexture.getHeight() / 2));
-                    view.draw2D(mNoItemsTexture, x, y);
+                    //view.draw2D(mNoItemsTexture, x, y);
                 }
 
                 float yLocOffset = 0.2f;
@@ -682,17 +688,17 @@ public final class GridDrawManager {
                 }
                 GridDrawables.sSelectedGrid.unbindArrays(gl);
             }
-            GridDrawables.sVideoGrid.bindArrays(gl);
-            Texture videoTexture = drawables.mTextureVideo;
-            for (int i = firstBufferedVisibleSlot; i <= lastBufferedVisibleSlot; ++i) {
-                DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT];
-                if (displayItem != null && displayItem.mAlive) {
-                    if (displayItem.mItemRef.getMediaType() == MediaItem.MEDIA_TYPE_VIDEO) {
-                        drawDisplayItem(view, gl, displayItem, videoTexture, PASS_VIDEO_LABEL, null, 0);
-                    }
-                }
-            }
-            GridDrawables.sVideoGrid.unbindArrays(gl);
+//            GridDrawables.sVideoGrid.bindArrays(gl);
+//            Texture videoTexture = drawables.mTextureVideo;
+//            for (int i = firstBufferedVisibleSlot; i <= lastBufferedVisibleSlot; ++i) {
+//                DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT];
+//                if (displayItem != null && displayItem.mAlive) {
+//                    if (displayItem.mItemRef.getMediaType() == MediaItem.MEDIA_TYPE_VIDEO) {
+//                        drawDisplayItem(view, gl, displayItem, videoTexture, PASS_VIDEO_LABEL, null, 0);
+//                    }
+//                }
+//            }
+//            GridDrawables.sVideoGrid.unbindArrays(gl);
             gl.glDepthFunc(GL10.GL_LEQUAL);
         }
     }
@@ -705,6 +711,7 @@ public final class GridDrawManager {
         float translateYf = animatedPosition.y * camera.mOneByScale;
         float translateZf = -animatedPosition.z;
         int stackId = displayItem.getStackIndex();
+        Log.d(TAG, "drawDisplayItem stackId = " + stackId);
         final int maxDisplayedItemsPerSlot = (displayItem.mCurrentSlotIndex == mCurrentScaleSlot && mCurrentScaleSlot != Shared.INVALID) ? GridLayer.MAX_DISPLAYED_ITEMS_PER_FOCUSED_SLOT
                 : GridLayer.MAX_DISPLAYED_ITEMS_PER_SLOT;
         if (pass == PASS_PLACEHOLDER || pass == PASS_FRAME_PLACEHOLDER) {
@@ -738,6 +745,7 @@ public final class GridDrawManager {
             } else {
                 bind = view.bind(previousTexture);
             }
+            
         } else if (stackId >= maxDisplayedItemsPerSlot && pass == PASS_THUMBNAIL_CONTENT) {
             mDisplayList.setAlive(displayItem, true);
         }

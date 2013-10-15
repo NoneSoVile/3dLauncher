@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.cooliris.app.App;
+import com.cooliris.app.Res;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -60,19 +61,26 @@ public class AppsDataSource implements DataSource {
             item.mId = i;
             item.mFilePath = "" + i;
             item.drawable = getFullResIcon(info);
-            item.iconID = getFullResIconID(info.activityInfo);
-            final String packageName = info.activityInfo.applicationInfo.packageName;
-            ComponentName componentName = new ComponentName(packageName,
-                    info.activityInfo.name);
-            item.packageName = packageName;
-            item.intent = setActivity(componentName, Intent.FLAG_ACTIVITY_NEW_TASK
-                    | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            if(i == 0){
+            	item.iconID = Res.drawable.grid_check_on;
+            }else{
+            	item.iconID = getFullResIconID(info.activityInfo);
+                final String packageName = info.activityInfo.applicationInfo.packageName;
+                ComponentName componentName = new ComponentName(packageName,
+                        info.activityInfo.name);
+                item.packageName = packageName;
+                item.intent = setActivity(componentName, Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            }
+            
+
             item.setMediaType(MediaItem.MEDIA_TYPE_IMAGE);
             
             feed.addItemToMediaSet(item, parentSet);
-            parentSet.updateNumExpectedItems();
-            parentSet.generateTitle(true);
+
 		}
+        parentSet.updateNumExpectedItems();
+        parentSet.generateTitle(true);
 
 	}
 	

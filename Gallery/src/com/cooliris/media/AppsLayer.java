@@ -2,6 +2,7 @@ package com.cooliris.media;
 
 import java.util.ArrayList;
 
+import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
 import android.content.Context;
@@ -779,7 +780,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	        view.setAlpha(1.0f);
 	        if (mSelectedAlpha != 1.0f) {
 	            gl.glEnable(GL11.GL_BLEND);
-	            gl.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+	            gl.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
 	            view.setAlpha(mSelectedAlpha);
 	        }
 	        if (selectedSlotIndex != Shared.INVALID) {
@@ -791,7 +792,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	                mInputProcessor.getCurrentScaledSlot(), mInputProcessor.isFocusItemPressed(), mInputProcessor.getScale(),
 	                mInputProcessor.getScaleGestureDetector(), mFeedAboutToChange);
 	        if (mSelectedAlpha != 0.0f) {
-	            mDrawManager.drawThumbnails(view, gl, mState);
+	        	//mDrawManager.drawThumbnails(view, gl, mState);
 	        }
 	        if (mSelectedAlpha != 1.0f) {
 	            gl.glDisable(GL11.GL_BLEND);
@@ -809,6 +810,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	        // We draw the placeholder for all visible slots.
 	        if (mHud != null && mDrawManager != null) {
 	            if (mMediaFeed != null) {
+	            	mDrawManager.drawThumbnails(view, gl, mState);
 	                mDrawManager.drawBlendedComponents(view, gl, mSelectedAlpha, mState, mHud.getMode(),
 	                        mTimeElapsedSinceStackViewReady, mTimeElapsedSinceGridViewReady, mSelectedBucketList, mMarkedBucketList,
 	                        mMediaFeed.getWaitingForMediaScanner() || mFeedAboutToChange || mMediaFeed.isLoading());

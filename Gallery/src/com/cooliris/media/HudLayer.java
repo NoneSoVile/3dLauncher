@@ -419,7 +419,7 @@ public final class HudLayer extends Layer {
     protected void deleteSelection() {
         mGridLayer.deleteSelection();
     }
-
+//
 //    void setGridLayer(GridLayer layer) {
 //        mGridLayer = layer;
 //        updateViews();

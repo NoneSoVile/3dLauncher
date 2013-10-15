@@ -40,7 +40,7 @@ public final class GridDrawables {
     private static final int TEXTURE_FRAME_FOCUS = Res.drawable.stack_frame_focus;
     private static final int TEXTURE_FRAME_PRESSED = Res.drawable.stack_frame_gold;
     private static final int TEXTURE_LOCATION = Res.drawable.btn_location_filter_unscaled;
-    private static final int TEXTURE_VIDEO = Res.drawable.videooverlay;
+    public static final int TEXTURE_VIDEO = Res.drawable.videooverlay;
     private static final int TEXTURE_CHECKMARK_ON = Res.drawable.grid_check_on;
     private static final int TEXTURE_CHECKMARK_OFF = Res.drawable.grid_check_off;
     private static final int TEXTURE_CAMERA_SMALL = Res.drawable.icon_camera_small_unscaled;
