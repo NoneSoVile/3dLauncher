@@ -15,14 +15,14 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cooliris.media.tests">
+    package="com.xlauncher.media.tests">
 
     <application>
         <uses-library android:name="android.test.runner" />
     </application>
 
-    <instrumentation android:name="com.cooliris.media.Gallery3DLauncher"
-        android:targetPackage="com.cooliris.media"
+    <instrumentation android:name="com.xlauncher.media.Gallery3DLauncher"
+        android:targetPackage="com.xlauncher.media"
         android:label="Gallery3D Launch Performance">
     </instrumentation>
 

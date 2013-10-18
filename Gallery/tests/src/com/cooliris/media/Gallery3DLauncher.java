@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cooliris.media;
+package com.xlauncher.media;
 
 import android.app.Activity;
 import android.test.LaunchPerformanceBase;
@@ -29,7 +29,7 @@ public class Gallery3DLauncher extends LaunchPerformanceBase {
     public void onCreate(Bundle arguments) {
         super.onCreate(arguments);
 
-        mIntent.setClassName(getTargetContext(), "com.cooliris.media.Gallery");
+        mIntent.setClassName(getTargetContext(), "com.xlauncher.media.Gallery");
         start();
     }
 
