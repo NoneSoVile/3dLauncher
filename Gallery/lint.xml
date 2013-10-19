@@ -3,7 +3,7 @@
     <issue id="NewApi" severity="ignore">
         <ignore path="src/com/cooliris/media/GridInputProcessor.java" />
     </issue>
-    <issue id="WrongCall">
+    <issue id="WrongCall" severity="ignore">
         <ignore path="src/com/cooliris/media/AppsLayer.java" />
         <ignore path="src/com/cooliris/media/GridLayer.java" />
     </issue>

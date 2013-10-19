@@ -34,8 +34,15 @@ public class AppsDataSource implements DataSource {
 	public void loadMediaSets(MediaFeed feed) {
 		MediaSet set = null;
 		set = feed.addMediaSet(0, this); // Create dummy set.
-        set.mName = "all apps";
+        set.mName = "所有应用";
         set.mId = 0;
+        set.setNumExpectedItems(1);
+        set.generateTitle(true);
+        set.mPicasaAlbumId = Shared.INVALID;
+        
+		set = feed.addMediaSet(1, this); // Create dummy set.
+        set.mName = "经常使用";
+        set.mId = 1;
         set.setNumExpectedItems(1);
         set.generateTitle(true);
         set.mPicasaAlbumId = Shared.INVALID;
@@ -55,6 +62,8 @@ public class AppsDataSource implements DataSource {
 		mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 		apps = packageManager.queryIntentActivities(mainIntent, 0);
 		int size = apps.size();
+		if(parentSet.mId == 1)
+			size /= 10;
 		Log.d(TAG, "loadItemsForSet apps total = " + size);
 		for (int i = 0; i < size; i++) {
 			ResolveInfo info = apps.get(i);
@@ -67,6 +76,7 @@ public class AppsDataSource implements DataSource {
 			ComponentName componentName = new ComponentName(packageName,
 					info.activityInfo.name);
 			item.packageName = packageName;
+			item.mCaption = info.loadLabel(mPackageManager).toString();//info.activityInfo.name;
 			item.intent = setActivity(componentName,
 					Intent.FLAG_ACTIVITY_NEW_TASK
 							| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);

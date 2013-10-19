@@ -210,15 +210,19 @@ public final class Gallery extends Activity {
         if (mRenderView != null) {
             mRenderView.onResume();
         }
+        
         if (mApp.isPaused()) {
+        	/*
             if (mPicasaHandler != null) {
                 mPicasaHandler.removeMessages(GET_PICASA_ACCOUNT_STATUS);
                 mPicasaHandler.sendEmptyMessage(UPDATE_PICASA_ACCOUNT_STATUS);
             }
             // Stop the thumbnailer
             CacheService.startCache(this, false);
+            */
         	mApp.onResume();
         }
+        
     }
 
     void updatePicasaAccountStatus() {
@@ -246,7 +250,7 @@ public final class Gallery extends Activity {
             }
             mWakeLock = null;
         }
-
+/*
         LocalDataSource.sThumbnailCache.flush();
         LocalDataSource.sThumbnailCacheVideo.flush();
         PicasaDataSource.sThumbnailCache.flush();
@@ -255,6 +259,8 @@ public final class Gallery extends Activity {
             mPicasaHandler.removeMessages(GET_PICASA_ACCOUNT_STATUS);
             mPicasaHandler.removeMessages(UPDATE_PICASA_ACCOUNT_STATUS);
         }
+        */
+        
     	mApp.onPause();
     }
 
@@ -265,7 +271,7 @@ public final class Gallery extends Activity {
             mGridLayer.stop();
 
         // Start the thumbnailer.
-        CacheService.startCache(this, true);
+        //CacheService.startCache(this, true);
     }
 
     @Override

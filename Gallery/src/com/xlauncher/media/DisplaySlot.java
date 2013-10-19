@@ -18,6 +18,8 @@ package com.xlauncher.media;
 
 import java.util.HashMap;
 
+import android.util.Log;
+
 import com.xlauncher.app.App;
 
 // CR: this stuff needs comments really badly.
@@ -31,6 +33,7 @@ public final class DisplaySlot {
     private static final StringTexture.Config CAPTION_STYLE = new StringTexture.Config();
     private static final StringTexture.Config CLUSTER_STYLE = new StringTexture.Config();
     private static final StringTexture.Config LOCATION_STYLE = new StringTexture.Config();
+	private static final String TAG = "DisplaySlot";
 
     static {
         CAPTION_STYLE.sizeMode = StringTexture.Config.SIZE_TEXT_TO_BOUNDS;
@@ -66,6 +69,13 @@ public final class DisplaySlot {
             set.mReverseGeocodedLocationRequestMade = false;
             set.mReverseGeocodedLocationComputed = false;
         }
+        if(set.mTitleString == null){
+        	setTitle(set.getItems().get(0).mCaption);
+        }
+    }
+    
+    public void setTitle(String title){
+    	mTitle = title;
     }
 
     public MediaSet getMediaSet() {
@@ -97,11 +107,16 @@ public final class DisplaySlot {
 
     public StringTexture getTitleImage(HashMap<String, StringTexture> textureTable) {
         if (mSetRef == null) {
+        	Log.d(TAG, "getTitleImage mSetRef is null!");
             return null;
         }
         StringTexture texture = mTitleImage;
         String title = mSetRef.mTruncTitleString;
-        if (texture == null && title != null && !(title.equals(mTitle))) {
+        if(title == null){
+        	title = mTitle;
+        }
+        Log.d(TAG, "getTitleImage mSetRef.mTruncTitleString is " + mSetRef.mTruncTitleString);
+        if (texture == null && title != null) {
             texture = getTextureForString(title, textureTable, ((mSetRef.mId != Shared.INVALID && mSetRef.mId != 0) ? CAPTION_STYLE
                     : CLUSTER_STYLE));
             mTitleImage = texture;
@@ -127,6 +142,7 @@ public final class DisplaySlot {
                 }
             }
         }
+        
         return mLocationImage;
     }
 }

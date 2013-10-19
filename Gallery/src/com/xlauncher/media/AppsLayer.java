@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.SensorEvent;
 import android.opengl.GLU;
 import android.os.PowerManager;
@@ -13,6 +15,7 @@ import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.app.Activity;
 
 import com.xlauncher.app.App;
 import com.xlauncher.app.Res;
@@ -239,8 +242,8 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	                }
 	            }
 	            layoutInterface.mNumRows = numMaxRows;
-	            layoutInterface.mSpacingX = (int) (10 * App.PIXEL_DENSITY);
-	            layoutInterface.mSpacingY = (int) (10 * App.PIXEL_DENSITY);
+	            layoutInterface.mSpacingX = (int) (40 * App.PIXEL_DENSITY);
+	            layoutInterface.mSpacingY = (int) (40 * App.PIXEL_DENSITY);
 	            if (mState == STATE_MEDIA_SETS) {
 	                // Entering album.
 	                mInAlbum = true;
@@ -325,7 +328,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	            mCamera.moveZTo(0);
 	        }
 	    }
-
+	    
 	    protected void enableLocationFiltering(String label) {
 	        if (mLocationFilter == false) {
 	            mLocationFilter = true;

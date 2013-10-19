@@ -1,6 +1,9 @@
 package com.xlauncher.media;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -794,6 +797,7 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 					Utils.playVideo(mContext, item);
 					Log.d(TAG, "selectSlot MEDIA_TYPE_VIDEO");
 				} else {
+					/*
 					mCurrentSelectedSlot = slotId;
 					layer.endSlideshow();
 					layer.setState(AppsLayer.STATE_FULL_SCREEN);
@@ -802,11 +806,29 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 					layer.getHud().fullscreenSelectionChanged(item,
 							mCurrentSelectedSlot + 1,
 							layer.getCompleteRange().end + 1);
+							*/
+					startActivityForResultSafely(item.intent, 0);
 					Log.d(TAG, "selectSlot setState STATE_FULL_SCREEN");
 				}
 			}
 		}
 		constrainCamera(true);
+	}
+	
+	void startActivityForResultSafely(Intent intent, int requestCode) {
+		try {
+			((Activity)mContext).startActivityForResult(intent, requestCode);
+
+		} catch (ActivityNotFoundException e) {
+			Log.d(TAG, "ActivityNotFoundException");
+		} catch (SecurityException e) {
+			Log.e(TAG,
+					"Launcher does not have the permission to launch "
+							+ intent
+							+ ". Make sure to create a MAIN intent-filter for the corresponding activity "
+							+ "or use the exported attribute for this activity.",
+					e);
+		}
 	}
 
 	public boolean onDoubleTap(MotionEvent e) {

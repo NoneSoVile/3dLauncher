@@ -563,7 +563,7 @@ public final class GridDrawManager {
             
             if (mSpreadValue <= 1.0f)
                 gl.glDepthFunc(GL10.GL_ALWAYS);
-            if (state == GridLayer.STATE_MEDIA_SETS || state == GridLayer.STATE_TIMELINE) {
+            if (state == GridLayer.STATE_MEDIA_SETS || state == GridLayer.STATE_TIMELINE || state == GridLayer.STATE_GRID_VIEW) {
                 DisplaySlot[] displaySlots = mDisplaySlots;
                 GridDrawables.sTextGrid.bindArrays(gl);
                 final float textOffsetY = 0.82f;

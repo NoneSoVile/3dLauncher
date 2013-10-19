@@ -416,6 +416,7 @@ public final class MediaFeed implements Runnable {
             if (slotIndex >= setToUse.getNumItems()) {
                 return null;
             }
+            
             mSingleWrapper.getItems().set(0, items.get(slotIndex));
             return mSingleWrapper;
         } else if (currentMediaSetIndex != Shared.INVALID && currentMediaSetIndex < mediaSetsSize) {
@@ -944,6 +945,7 @@ public final class MediaFeed implements Runnable {
     }
 
     public void onPause() {
+    	
         final HashMap<String, ContentObserver> observers = mContentObservers;
         final int numObservers = observers.size();
         if (numObservers > 0) {
@@ -964,6 +966,7 @@ public final class MediaFeed implements Runnable {
             }
         }
         observers.clear();
+        
     }
 
     public void onResume() {
@@ -974,6 +977,7 @@ public final class MediaFeed implements Runnable {
         // We setup the listeners for this datasource
         final String[] uris = dataSource.getDatabaseUris();
         final HashMap<String, ContentObserver> observers = mContentObservers;
+        
         if (context instanceof Gallery) {
             final Gallery gallery = (Gallery) context;
             final ContentResolver cr = context.getContentResolver();
@@ -997,6 +1001,7 @@ public final class MediaFeed implements Runnable {
                 }
             }
         }
+        
         refresh();
     }
 }
