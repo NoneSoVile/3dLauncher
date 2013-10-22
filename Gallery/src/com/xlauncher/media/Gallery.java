@@ -137,7 +137,7 @@ public final class Gallery extends Activity {
 //                mRenderView);
 //        mRenderView.setRootLayer(mGridLayer);
         
-        mAppsLayer = new AppsLayer(this, (int) (64.0f * App.PIXEL_DENSITY), (int) (64.0f * App.PIXEL_DENSITY), new GridLayoutInterface(4),
+        mAppsLayer = new AppsLayer(this, (int) (60.0f * App.PIXEL_DENSITY), (int) (60.0f * App.PIXEL_DENSITY), new GridLayoutInterface(4),
                 mRenderView);
         mRenderView.setRootLayer(mAppsLayer);
         setContentView(mRenderView);

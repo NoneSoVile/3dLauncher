@@ -22,11 +22,12 @@ import com.xlauncher.app.Res;
 import com.xlauncher.media.RenderView.Lists;
 
 public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.Listener {
-    private static final String TAG = "GridLayer";
+    private static final String TAG = "AppsLayer";
     public static final int STATE_MEDIA_SETS = 0;
     public static final int STATE_GRID_VIEW = 1;
     public static final int STATE_FULL_SCREEN = 2;
     public static final int STATE_TIMELINE = 3;
+    public static final int STATE_PAGE_GRID_VIEW = 4;
 
     public static final int ANCHOR_LEFT = 0;
     public static final int ANCHOR_RIGHT = 1;
@@ -166,7 +167,8 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
         mCameraManager = new GridCameraManager(mCamera);
         mDrawManager = new GridDrawManager(context, mCamera, mDrawables, mDisplayList, mDisplayItems, mDisplaySlots);
         mInputProcessor = new AppsInputProcessor(context, mCamera, this, mView, mTempVec, mDisplayItems);
-        setState(STATE_MEDIA_SETS);
+        //setState(STATE_MEDIA_SETS);
+
 	}
 	   public HudLayer getHud() {
 	        return mHud;
@@ -232,6 +234,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	        if (yStretch < 1.0f) {
 	            yStretch = 1.0f;
 	        }
+	        layoutInterface.setNumColsPerPage(Shared.INVALID);
 	        switch (state) {
 	        case STATE_GRID_VIEW:
 	            mTimeElapsedSinceGridViewReady = 0.0f;
@@ -242,7 +245,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	                }
 	            }
 	            layoutInterface.mNumRows = numMaxRows;
-	            layoutInterface.mSpacingX = (int) (40 * App.PIXEL_DENSITY);
+	            layoutInterface.mSpacingX = (int) (20 * App.PIXEL_DENSITY);
 	            layoutInterface.mSpacingY = (int) (40 * App.PIXEL_DENSITY);
 	            if (mState == STATE_MEDIA_SETS) {
 	                // Entering album.
@@ -317,6 +320,45 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	                mInAlbum = false;
 	            }
 	            break;
+	        case STATE_PAGE_GRID_VIEW:
+	            mTimeElapsedSinceGridViewReady = 0.0f;
+	            if (feed != null && feedUnchanged == false) {
+	                boolean updatedData = feed.restorePreviousClusteringState();
+	                if (updatedData) {
+	                    performLayout = false;
+	                }
+	            }
+	            layoutInterface.mNumRows = numMaxRows;
+	            layoutInterface.mSpacingX = (int) (20 * App.PIXEL_DENSITY);
+	            layoutInterface.mSpacingY = (int) (40 * App.PIXEL_DENSITY);
+	            layoutInterface.mPageSpacing = (int) (80 * App.PIXEL_DENSITY);
+	            layoutInterface.setNumColsPerPage(4);
+	            if (mState == STATE_MEDIA_SETS) {
+	                // Entering album.
+	                mInAlbum = true;
+	                MediaSet set = feed.getCurrentSet();
+	                int icon = mDrawables.getIconForSet(set, true);
+	                if (set != null) {
+	                    mHud.getPathBar().pushLabel(icon, set.mNoCountTitleString, new Runnable() {
+	                        public void run() {
+	                            if (mFeedAboutToChange) {
+	                                return;
+	                            }
+	                            if (mHud.getAlpha() == 1.0f) {
+	                                disableLocationFiltering();
+	                                mInputProcessor.clearSelection();
+	                                setState(STATE_GRID_VIEW);
+	                            } else {
+	                                mHud.setAlpha(1.0f);
+	                            }
+	                        }
+	                    });
+	                }
+	            }
+	            if (mState == STATE_FULL_SCREEN) {
+	                mHud.getPathBar().popLabel();
+	            }
+	        	break;
 	        }
 	        mState = state;
 	        mHud.onGridStateChanged();
@@ -371,7 +413,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	        }
 	        switch (state) {
 	        case STATE_GRID_VIEW:
-	            setState(STATE_MEDIA_SETS);
+	            //setState(STATE_MEDIA_SETS);
 	            break;
 	        case STATE_TIMELINE:
 	            setState(STATE_GRID_VIEW);
@@ -579,9 +621,9 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	        }
 	        mCameraManager.computeVisibleRange(mMediaFeed, mLayoutInterface, mDeltaAnchorPosition, mVisibleRange,
 	                mBufferedVisibleRange, mCompleteRange, mState);
-	        Log.d(TAG, "mVisibleRange (" + mVisibleRange.begin + "," + mVisibleRange.end + ")");
-	        Log.d(TAG, "mBufferedVisibleRange (" + mBufferedVisibleRange.begin + "," + mBufferedVisibleRange.end + ")");
-	        Log.d(TAG, "mCompleteRange (" + mCompleteRange.begin + "," + mCompleteRange.end + ")");
+//	        Log.d(TAG, "mVisibleRange (" + mVisibleRange.begin + "," + mVisibleRange.end + ")");
+//	        Log.d(TAG, "mBufferedVisibleRange (" + mBufferedVisibleRange.begin + "," + mBufferedVisibleRange.end + ")");
+//	        Log.d(TAG, "mCompleteRange (" + mCompleteRange.begin + "," + mCompleteRange.end + ")");
 	    }
 
 	    private void computeVisibleItems() {
@@ -707,6 +749,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	                            }
 	                        }
 	                    }
+	                    /*
 	                    if (mRequestFocusContentUri != null) {
 	                        // We have to find the item that has this contentUri
 	                        int numSlots = mCompleteRange.end + 1;
@@ -730,6 +773,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	                        }
 	                        mRequestFocusContentUri = null;
 	                    }
+	                    */
 	                }
 	            } finally {
 	                pool.delete(position);
@@ -929,6 +973,8 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	        int numVisibleItems = mVisibleRange.end - mVisibleRange.begin + 1;
 	        if (mState == STATE_MEDIA_SETS && currentlyVisibleSlotIndex < numVisibleItems) {
 	            currentlyVisibleSlotIndex = getAnchorSlotIndex(ANCHOR_LEFT);
+	            mMediaFeed.expandMediaSet(0);
+	            setState(STATE_GRID_VIEW);
 	        }
 	        if (mCurrentExpandedSlot != Shared.INVALID) {
 	            currentlyVisibleSlotIndex = mCurrentExpandedSlot;

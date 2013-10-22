@@ -101,7 +101,7 @@ public final class HudLayer extends Layer {
 
     private final Runnable mGridModeButtonAction = new Runnable() {
         public void run() {
-            mGridLayer.setState(GridLayer.STATE_GRID_VIEW);
+            mGridLayer.setState(AppsLayer.STATE_GRID_VIEW);
         }
     };
 
@@ -112,7 +112,8 @@ public final class HudLayer extends Layer {
     private static final int STACK_MODE_PRESSED_ICON = Res.drawable.mode_grid;
     private final Runnable mStackModeButtonAction = new Runnable() {
         public void run() {
-            mGridLayer.setState(GridLayer.STATE_TIMELINE);
+        	mGridLayer.setState(AppsLayer.STATE_PAGE_GRID_VIEW);
+            //mGridLayer.setState(GridLayer.STATE_TIMELINE);
         }
     };
     private float mAlpha;
@@ -517,18 +518,23 @@ public final class HudLayer extends Layer {
             pressedImage = CAMERA_BUTTON_ICON_PRESSED;
             action = mCameraButtonAction;
             break;
-        case GridLayer.STATE_GRID_VIEW:
+        case AppsLayer.STATE_GRID_VIEW:
             height /= 2;
             image = STACK_MODE_ICON;
             pressedImage = STACK_MODE_PRESSED_ICON;
             action = mStackModeButtonAction;
             break;
-        case GridLayer.STATE_TIMELINE:
+        case AppsLayer.STATE_TIMELINE:
             image = GRID_MODE_ICON;
             pressedImage = GRID_MODE_PRESSED_ICON;
             action = mGridModeButtonAction;
             break;
-        case GridLayer.STATE_FULL_SCREEN:
+        case AppsLayer.STATE_PAGE_GRID_VIEW:
+            image = GRID_MODE_ICON;
+            pressedImage = GRID_MODE_PRESSED_ICON;
+            action = mGridModeButtonAction;
+            break;
+        case AppsLayer.STATE_FULL_SCREEN:
             if (getGridLayer() != null && getGridLayer().getFeed() != null
                     && getGridLayer().getFeed().getExpandedMediaSet() != null) {
                 if (getGridLayer().getFeed().getExpandedMediaSet().mId == LocalDataSource.CAMERA_BUCKET_ID) {

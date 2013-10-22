@@ -25,6 +25,7 @@ public final class GridLayoutInterface extends LayoutInterface {
         mNumRows = numRows;
         mSpacingX = (int) (20 * App.PIXEL_DENSITY);
         mSpacingY = (int) (40 * App.PIXEL_DENSITY);
+        mPageSpacing = (int) (20 * App.PIXEL_DENSITY);
     }
     
     public float getSpacingForBreak() {
@@ -39,18 +40,43 @@ public final class GridLayoutInterface extends LayoutInterface {
             add -= numRows;
         return breakSlotIndex + add;
     }
+    
+    public void setNumColsPerPage(int numCols){
+    	if(numCols > 0){
+    		mNumColsPerPage = numCols;
+    		mPageItemCount = mNumColsPerPage * mNumRows;
+    	}else{
+    		mNumColsPerPage = Shared.INVALID;
+    		mPageItemCount = Shared.INVALID;
+    	}
+    }
 
     public void getPositionForSlotIndex(int slotIndex, int itemWidth, int itemHeight, Vector3f outPosition) {
-        int numRows = mNumRows;
-        int resultSlotIndex = slotIndex;
-        outPosition.x = (resultSlotIndex / numRows) * (itemWidth + mSpacingX);
-        outPosition.y = (resultSlotIndex % numRows) * (itemHeight + mSpacingY);
-        int maxY = (numRows - 1) * (itemHeight + mSpacingY);
-        outPosition.y -= (maxY >> 1);
-        outPosition.z = 0;
+    	if(mNumColsPerPage == Shared.INVALID){
+            int numRows = mNumRows;
+            int resultSlotIndex = slotIndex;
+            outPosition.x = (resultSlotIndex / numRows) * (itemWidth + mSpacingX);
+            outPosition.y = (resultSlotIndex % numRows) * (itemHeight + mSpacingY);
+            int maxY = (numRows - 1) * (itemHeight + mSpacingY);
+            outPosition.y -= (maxY >> 1);
+            outPosition.z = 0;	
+    	}else{
+            int numRows = mNumRows;
+            int resultSlotIndex = slotIndex;
+            int slotPage = slotIndex / mPageItemCount;
+            outPosition.x = (resultSlotIndex / numRows - slotPage) * (itemWidth + mSpacingX) + slotPage * (itemWidth + mPageSpacing);
+            outPosition.y = (resultSlotIndex % numRows) * (itemHeight + mSpacingY);
+            int maxY = (numRows - 1) * (itemHeight + mSpacingY);
+            outPosition.y -= (maxY >> 1);
+            outPosition.z = 0;	
+    	}
+
     }
 
     public int mNumRows;
     public int mSpacingX;
     public int mSpacingY;
+	public int mNumColsPerPage = Shared.INVALID;
+	public int mPageItemCount = Shared.INVALID;
+	public int mPageSpacing;
 }

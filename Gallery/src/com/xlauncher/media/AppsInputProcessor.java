@@ -115,6 +115,7 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 	}
 
 	public void onSensorChanged(RenderView view, SensorEvent event, int state) {
+		/*
 		if (mZoomGesture)
 			return;
 		switch (event.sensor.getType()) {
@@ -158,6 +159,7 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 			}
 			break;
 		}
+		*/
 	}
 
 	public boolean onTouchEvent(MotionEvent event) {
@@ -640,7 +642,7 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 			int numVisibleSlots = visibleRange.end - visibleRange.begin;
 			if (numVisibleSlots > 0) {
 				float fastFlingVelocity = 10.0f;
-				int slotsToSkip = (int) (numVisibleSlots * -Math.signum(normalizedVelocity));//(int) (numVisibleSlots * (-normalizedVelocity / fastFlingVelocity));
+				int slotsToSkip = (int) (numVisibleSlots * (-normalizedVelocity / fastFlingVelocity));
 				int maxSlots = numVisibleSlots;
 				if (slotsToSkip > maxSlots)
 					slotsToSkip = maxSlots;
@@ -670,6 +672,7 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 	}
 
 	public void onLongPress(MotionEvent e) {
+		/*
 		if (mZoomGesture)
 			return;
 		if (mLayer.getFeed() != null && mLayer.getFeed().isSingleImageMode()) {
@@ -689,6 +692,7 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 			hud.enterSelectionMode();
 			layer.addSlotToSelectedItems(mCurrentFocusSlot, true, true);
 		}
+		*/
 	}
 
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
@@ -779,7 +783,8 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 	private void selectSlot(int slotId) {
 		AppsLayer layer = mLayer;
 		Log.d(TAG, "selectSlot");
-		if (layer.getState() == AppsLayer.STATE_GRID_VIEW) {
+		if (layer.getState() == AppsLayer.STATE_GRID_VIEW ||
+				layer.getState() == AppsLayer.STATE_PAGE_GRID_VIEW) {
 			DisplayItem displayItem = layer.getDisplayItemForSlotId(slotId);
 			if (displayItem != null) {
 				final MediaItem item = displayItem.mItemRef;

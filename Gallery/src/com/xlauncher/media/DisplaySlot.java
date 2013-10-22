@@ -75,7 +75,8 @@ public final class DisplaySlot {
     }
     
     public void setTitle(String title){
-    	mTitle = title;
+    	int length = title.length();
+    	mTitle = (length > 8) ? title.substring(0,8)  : title;
     }
 
     public MediaSet getMediaSet() {
@@ -107,7 +108,7 @@ public final class DisplaySlot {
 
     public StringTexture getTitleImage(HashMap<String, StringTexture> textureTable) {
         if (mSetRef == null) {
-        	Log.d(TAG, "getTitleImage mSetRef is null!");
+        	//Log.d(TAG, "getTitleImage mSetRef is null!");
             return null;
         }
         StringTexture texture = mTitleImage;
@@ -115,7 +116,7 @@ public final class DisplaySlot {
         if(title == null){
         	title = mTitle;
         }
-        Log.d(TAG, "getTitleImage mSetRef.mTruncTitleString is " + mSetRef.mTruncTitleString);
+        //Log.d(TAG, "getTitleImage mSetRef.mTruncTitleString is " + mSetRef.mTruncTitleString);
         if (texture == null && title != null) {
             texture = getTextureForString(title, textureTable, ((mSetRef.mId != Shared.INVALID && mSetRef.mId != 0) ? CAPTION_STYLE
                     : CLUSTER_STYLE));

@@ -91,7 +91,7 @@ public final class GridDrawManager {
         mDisplayList = displayList;
         mDrawables = drawables;
         mCamera = camera;
-        mItemsDrawn = new DisplayItem[GridLayer.MAX_ITEMS_DRAWABLE];
+        mItemsDrawn = new DisplayItem[AppsLayer.MAX_ITEMS_DRAWABLE];
 
         StringTexture.Config stc = new StringTexture.Config();
         stc.bold = true;
@@ -150,11 +150,11 @@ public final class GridDrawManager {
             int index = itrSlotIndex;
             boolean priority = !(index < firstVisibleSlot || index > lastVisibleSlot);
             int startSlotIndex = 0;
-            final int maxDisplayedItemsPerSlot = (index == mCurrentScaleSlot) ? GridLayer.MAX_DISPLAYED_ITEMS_PER_FOCUSED_SLOT
-                    : GridLayer.MAX_DISPLAYED_ITEMS_PER_SLOT;
+            final int maxDisplayedItemsPerSlot = (index == mCurrentScaleSlot) ? AppsLayer.MAX_DISPLAYED_ITEMS_PER_FOCUSED_SLOT
+                    : AppsLayer.MAX_DISPLAYED_ITEMS_PER_SLOT;
             if (index != mCurrentScaleSlot) {
                 for (int j = maxDisplayedItemsPerSlot - 1; j >= 0; --j) {
-                    DisplayItem displayItem = displayItems[(index - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT + j];
+                    DisplayItem displayItem = displayItems[(index - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT + j];
                     if (displayItem == null) {
                         continue;
                     } else {
@@ -169,7 +169,7 @@ public final class GridDrawManager {
             // Prime the textures in the reverse order.
             for (int j = 0; j < maxDisplayedItemsPerSlot; ++j) {
                 int stackIndex = (index == mCurrentScaleSlot) ? maxDisplayedItemsPerSlot - j - 1 : j;
-                DisplayItem displayItem = displayItems[(index - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT
+                DisplayItem displayItem = displayItems[(index - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT
                         + stackIndex];
                 if (displayItem == null) {
                     continue;
@@ -195,10 +195,10 @@ public final class GridDrawManager {
                 continue;
             }
             view.prime(drawables.mTexturePlaceholder, true);//view.prime(drawables.mTexturePlaceholder, true);
-            Texture placeholder = (state == GridLayer.STATE_GRID_VIEW) ? drawables.mTexturePlaceholder : null;//drawables.mTexturePlaceholder : null;
-            final boolean pushDown = (state == GridLayer.STATE_GRID_VIEW || state == GridLayer.STATE_FULL_SCREEN) ? false : true;
-            for (int j = 0; j < GridLayer.MAX_ITEMS_PER_SLOT; ++j) {
-                DisplayItem displayItem = displayItems[(index - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT + j];
+            Texture placeholder = (state == AppsLayer.STATE_GRID_VIEW) ? drawables.mTexturePlaceholder : null;//drawables.mTexturePlaceholder : null;
+            final boolean pushDown = (state == AppsLayer.STATE_GRID_VIEW || state == AppsLayer.STATE_FULL_SCREEN) ? false : true;
+            for (int j = 0; j < AppsLayer.MAX_ITEMS_PER_SLOT; ++j) {
+                DisplayItem displayItem = displayItems[(index - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT + j];
                 if (displayItem == null)
                     continue;
                 Texture texture = displayItem.getThumbnailImage(context, sThumbnailConfig);
@@ -219,11 +219,11 @@ public final class GridDrawManager {
                 final float dx2 = mScaleGestureDetector.getBottomFingerDeltaX();
                 final float dy2 = mScaleGestureDetector.getBottomFingerDeltaY();
                 final float span = mScaleGestureDetector.getCurrentSpan();
-                if (state == GridLayer.STATE_FULL_SCREEN) {
+                if (state == AppsLayer.STATE_FULL_SCREEN) {
                     displayList.setOffset(displayItem, false, true, span, dx1, dy1, dx2, dy2);
                 } else {
                     if (!mHoldPosition) {
-                        if (state != GridLayer.STATE_GRID_VIEW) {
+                        if (state != AppsLayer.STATE_GRID_VIEW) {
                         	
                             if (currentScaleSlot == index) {
                                 displayList.setOffset(displayItem, true, false, span, dx1, dy1, dx2, dy2);
@@ -249,8 +249,8 @@ public final class GridDrawManager {
                     }
                 }
             }
-            for (int j = startSlotIndex; j < GridLayer.MAX_ITEMS_PER_SLOT; ++j) {
-                DisplayItem displayItem = displayItems[(index - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT + j];
+            for (int j = startSlotIndex; j < AppsLayer.MAX_ITEMS_PER_SLOT; ++j) {
+                DisplayItem displayItem = displayItems[(index - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT + j];
                 if (displayItem == null) {
                     break;
                 } else {
@@ -267,7 +267,7 @@ public final class GridDrawManager {
                         if (index == mCurrentScaleSlot)
                             displayItem.mAlive = true;
                         if ((!displayItem.isAnimating() || !texture.isLoaded())
-                                && displayItem.getStackIndex() > GridLayer.MAX_ITEMS_PER_SLOT) {
+                                && displayItem.getStackIndex() > AppsLayer.MAX_ITEMS_PER_SLOT) {
                             displayList.setAlive(displayItem, true);
                             continue;
                         }
@@ -283,7 +283,7 @@ public final class GridDrawManager {
                         // Move on to the next stack.
                         break;
                     }
-                    if (drawnCounter >= GridLayer.MAX_ITEMS_DRAWABLE - 1 || drawnCounter < 0) {
+                    if (drawnCounter >= AppsLayer.MAX_ITEMS_DRAWABLE - 1 || drawnCounter < 0) {
                         break;
                     }
                     // Insert in order of z.
@@ -316,14 +316,14 @@ public final class GridDrawManager {
             if (selectedSlotIndex != Shared.INVALID && (i >= selectedSlotIndex - 2 && i <= selectedSlotIndex + 2)) {
                 continue;
             }
-            DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT];
+            DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT];
             if (displayItem != null) {
                 displayItem.clearScreennailImage();
             }
         }
         if (selectedSlotIndex != Shared.INVALID) {
             float camX = camera.mLookAtX * camera.mScale;
-            int centerIndexInDrawnArray = (selectedSlotIndex - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT;
+            int centerIndexInDrawnArray = (selectedSlotIndex - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT;
             if (centerIndexInDrawnArray < 0 || centerIndexInDrawnArray >= displayItems.length) {
                 return;
             }
@@ -348,7 +348,7 @@ public final class GridDrawManager {
                 float viewAspect = camera.mAspectRatio;
                 int selectedSlotToUse = selectedSlotIndex + i;
                 if (selectedSlotToUse >= 0 && selectedSlotToUse <= lastBufferedVisibleSlot) {
-                    int indexInDrawnArray = (selectedSlotToUse - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT;
+                    int indexInDrawnArray = (selectedSlotToUse - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT;
                     if (indexInDrawnArray < 0 || indexInDrawnArray >= displayItems.length) {
                         return;
                     }
@@ -405,7 +405,7 @@ public final class GridDrawManager {
                             int nextSlotToUse = selectedSlotToUse + 1;
                             if (nextSlotToUse >= 0 && nextSlotToUse <= lastBufferedVisibleSlot) {
                                 int nextIndexInDrawnArray = (nextSlotToUse - firstBufferedVisibleSlot)
-                                        * GridLayer.MAX_ITEMS_PER_SLOT;
+                                        * AppsLayer.MAX_ITEMS_PER_SLOT;
                                 if (nextIndexInDrawnArray >= 0 && nextIndexInDrawnArray < displayItems.length) {
                                     float currentImageTheta = displayItem.mAnimatedImageTheta;
                                     displayItem = displayItems[nextIndexInDrawnArray];
@@ -490,27 +490,27 @@ public final class GridDrawManager {
         // We draw the frames around the drawn items.
         
         boolean currentFocusIsPressed = mCurrentFocusIsPressed;
-        if (state != GridLayer.STATE_FULL_SCREEN) {
+        if (state != AppsLayer.STATE_FULL_SCREEN) {
         /*
             GridDrawables.sFrame.bindArrays(gl);
-            Texture texturePlaceHolder = (state == GridLayer.STATE_GRID_VIEW) ? drawables.mTextureGridFrame
+            Texture texturePlaceHolder = (state == AppsLayer.STATE_GRID_VIEW) ? drawables.mTextureGridFrame
                     : drawables.mTextureFrame;
             for (int i = firstBufferedVisibleSlot; i <= lastBufferedVisibleSlot; ++i) {
                 if (i < firstVisibleSlot || i > lastVisibleSlot) {
                     continue;
                 }
                 boolean slotIsAlive = false;
-                final int maxDisplayedItemsPerSlot = (i == mCurrentScaleSlot) ? GridLayer.MAX_DISPLAYED_ITEMS_PER_FOCUSED_SLOT
-                        : GridLayer.MAX_DISPLAYED_ITEMS_PER_SLOT;
-                if (state != GridLayer.STATE_MEDIA_SETS && state != GridLayer.STATE_TIMELINE) {
+                final int maxDisplayedItemsPerSlot = (i == mCurrentScaleSlot) ? AppsLayer.MAX_DISPLAYED_ITEMS_PER_FOCUSED_SLOT
+                        : AppsLayer.MAX_DISPLAYED_ITEMS_PER_SLOT;
+                if (state != AppsLayer.STATE_MEDIA_SETS && state != AppsLayer.STATE_TIMELINE) {
                     for (int j = 0; j < maxDisplayedItemsPerSlot; ++j) {
-                        DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT + j];
+                        DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT + j];
                         if (displayItem != null) {
                             slotIsAlive |= displayItem.mAlive;
                         }
                     }
                     if (!slotIsAlive) {
-                        DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT];
+                        DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT];
                         if (displayItem != null) {
                             //drawDisplayItem(view, gl, displayItem, texturePlaceHolder, PASS_FRAME_PLACEHOLDER, null, 0);
                         }
@@ -542,7 +542,7 @@ public final class GridDrawManager {
                                         : (displayItemPresentInMarkedItems) ? texture : textureGrid);
                         float ratio = timeElapsedSinceGridView;
                         if (itemDrawn.mAlive) {
-                            if (state != GridLayer.STATE_GRID_VIEW) {
+                            if (state != AppsLayer.STATE_GRID_VIEW) {
                                 previousTexture = (displayItemPresentInSelectedItems) ? texturePressed : texture;
                                 textureToUse = (itemDrawn.getHasFocus()) ? (currentFocusIsPressed ? texturePressed : textureFocus)
                                         : previousTexture;
@@ -563,7 +563,10 @@ public final class GridDrawManager {
             
             if (mSpreadValue <= 1.0f)
                 gl.glDepthFunc(GL10.GL_ALWAYS);
-            if (state == GridLayer.STATE_MEDIA_SETS || state == GridLayer.STATE_TIMELINE || state == GridLayer.STATE_GRID_VIEW) {
+			if (state == AppsLayer.STATE_MEDIA_SETS
+					|| state == AppsLayer.STATE_TIMELINE
+					|| state == AppsLayer.STATE_GRID_VIEW
+					|| state == AppsLayer.STATE_PAGE_GRID_VIEW) {
                 DisplaySlot[] displaySlots = mDisplaySlots;
                 GridDrawables.sTextGrid.bindArrays(gl);
                 final float textOffsetY = 0.82f;
@@ -575,9 +578,9 @@ public final class GridDrawManager {
 
                 for (int i = firstBufferedVisibleSlot; i <= lastBufferedVisibleSlot; ++i) {
                     itemsPresent = true;
-                    if (mSpreadValue > 1.0f)
-                        continue;
-                    DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT];
+//                    if (mSpreadValue > 1.0f)
+//                        continue;
+                    DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT];
                     if (displayItem != null) {
                         DisplaySlot displaySlot = displaySlots[i - firstBufferedVisibleSlot];
                         Texture textureString = displaySlot.getTitleImage(stringTextureTable);
@@ -609,7 +612,7 @@ public final class GridDrawManager {
                 for (int i = firstBufferedVisibleSlot; i <= lastBufferedVisibleSlot; ++i) {
                     if (mSpreadValue > 1.0f)
                         continue;
-                    DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT];
+                    DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT];
                     if (displayItem != null) {
                         DisplaySlot displaySlot = displaySlots[i - firstBufferedVisibleSlot];
                         StringTexture textureString = displaySlot.getLocationImage(reverseGeocoder, stringTextureTable);
@@ -619,14 +622,14 @@ public final class GridDrawManager {
                         }
                     }
                 }
-                if (state == GridLayer.STATE_TIMELINE) {
+                if (state == AppsLayer.STATE_TIMELINE) {
                     GridDrawables.sLocationGrid.bindArrays(gl);
                     Texture locationTexture = drawables.mTextureLocation;
                     final float yLocationLabelOffset = 0.19f;
                     for (int i = firstBufferedVisibleSlot; i <= lastBufferedVisibleSlot; ++i) {
                         if (mCurrentScaleSlot != Shared.INVALID)
                             continue;
-                        DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT];
+                        DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT];
                         if (displayItem != null) {
                             if (displayItem.mAlive == true) {
                                 DisplaySlot displaySlot = displaySlots[i - firstBufferedVisibleSlot];
@@ -647,11 +650,11 @@ public final class GridDrawManager {
                     }
 
                     GridDrawables.sLocationGrid.unbindArrays(gl);
-                } else if (state == GridLayer.STATE_MEDIA_SETS && stackMixRatio > 0.0f) {
+                } else if (state == AppsLayer.STATE_MEDIA_SETS && stackMixRatio > 0.0f) {
                     GridDrawables.sSourceIconGrid.bindArrays(gl);
                     Texture transparentTexture = drawables.mTextureTransparent;
                     for (int i = firstBufferedVisibleSlot; i <= lastBufferedVisibleSlot; ++i) {
-                        DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT];
+                        DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT];
                         if (mCurrentScaleSlot != Shared.INVALID)
                             continue;
                         if (displayItem != null) {
@@ -675,14 +678,14 @@ public final class GridDrawManager {
                 gl.glTranslatef(0.0f, textOffsetY, 0.0f);
                 GridDrawables.sTextGrid.unbindArrays(gl);
             }
-            if (hudMode == HudLayer.MODE_SELECT && state != GridLayer.STATE_FULL_SCREEN) {
+            if (hudMode == HudLayer.MODE_SELECT && state != AppsLayer.STATE_FULL_SCREEN) {
                 Texture textureSelectedOn = drawables.mTextureCheckmarkOn;
                 Texture textureSelectedOff = drawables.mTextureCheckmarkOff;
                 view.prime(textureSelectedOn, true);
                 view.prime(textureSelectedOff, true);
                 GridDrawables.sSelectedGrid.bindArrays(gl);
                 for (int i = firstBufferedVisibleSlot; i <= lastBufferedVisibleSlot; ++i) {
-                    DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT];
+                    DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT];
                     if (displayItem != null) {
                         Texture textureToUse = selectedBucketList.find(displayItem.mItemRef) ? textureSelectedOn
                                 : textureSelectedOff;
@@ -694,7 +697,7 @@ public final class GridDrawManager {
 //            GridDrawables.sVideoGrid.bindArrays(gl);
 //            Texture videoTexture = drawables.mTextureVideo;
 //            for (int i = firstBufferedVisibleSlot; i <= lastBufferedVisibleSlot; ++i) {
-//                DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * GridLayer.MAX_ITEMS_PER_SLOT];
+//                DisplayItem displayItem = displayItems[(i - firstBufferedVisibleSlot) * AppsLayer.MAX_ITEMS_PER_SLOT];
 //                if (displayItem != null && displayItem.mAlive) {
 //                    if (displayItem.mItemRef.getMediaType() == MediaItem.MEDIA_TYPE_VIDEO) {
 //                        drawDisplayItem(view, gl, displayItem, videoTexture, PASS_VIDEO_LABEL, null, 0);
@@ -714,9 +717,9 @@ public final class GridDrawManager {
         float translateYf = animatedPosition.y * camera.mOneByScale;
         float translateZf = -animatedPosition.z;
         int stackId = displayItem.getStackIndex();
-        Log.d(TAG, "drawDisplayItem stackId = " + stackId);
-        final int maxDisplayedItemsPerSlot = (displayItem.mCurrentSlotIndex == mCurrentScaleSlot && mCurrentScaleSlot != Shared.INVALID) ? GridLayer.MAX_DISPLAYED_ITEMS_PER_FOCUSED_SLOT
-                : GridLayer.MAX_DISPLAYED_ITEMS_PER_SLOT;
+        //Log.d(TAG, "drawDisplayItem stackId = " + stackId);
+        final int maxDisplayedItemsPerSlot = (displayItem.mCurrentSlotIndex == mCurrentScaleSlot && mCurrentScaleSlot != Shared.INVALID) ? AppsLayer.MAX_DISPLAYED_ITEMS_PER_FOCUSED_SLOT
+                : AppsLayer.MAX_DISPLAYED_ITEMS_PER_SLOT;
         if (pass == PASS_PLACEHOLDER || pass == PASS_FRAME_PLACEHOLDER) {
             translateZf = -0.04f;
         } else {

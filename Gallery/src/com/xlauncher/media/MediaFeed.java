@@ -529,10 +529,12 @@ public final class MediaFeed implements Runnable {
     }
 
     public void run() {
+    	Log.d(TAG, "run mediafeed");
         DataSource dataSource = mDataSource;
         int sleepMs = 10;
         if (dataSource != null) {
             while (!Thread.interrupted() && !mIsShutdown) {
+            	Log.d(TAG, "run mediafeed innerloop");
                 String[] databaseUris = null;
                 boolean performRefresh = false;
                 synchronized (mRequestedRefresh) {
@@ -945,7 +947,7 @@ public final class MediaFeed implements Runnable {
     }
 
     public void onPause() {
-    	
+    /*	
         final HashMap<String, ContentObserver> observers = mContentObservers;
         final int numObservers = observers.size();
         if (numObservers > 0) {
@@ -966,6 +968,7 @@ public final class MediaFeed implements Runnable {
             }
         }
         observers.clear();
+        */
         
     }
 
@@ -975,6 +978,7 @@ public final class MediaFeed implements Runnable {
         if (context == null || dataSource == null)
             return;
         // We setup the listeners for this datasource
+        /*
         final String[] uris = dataSource.getDatabaseUris();
         final HashMap<String, ContentObserver> observers = mContentObservers;
         
@@ -1001,7 +1005,8 @@ public final class MediaFeed implements Runnable {
                 }
             }
         }
+        */
         
-        refresh();
+        //refresh();
     }
 }

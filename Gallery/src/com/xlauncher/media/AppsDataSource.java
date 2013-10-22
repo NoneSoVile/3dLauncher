@@ -32,6 +32,7 @@ public class AppsDataSource implements DataSource {
 
 	@Override
 	public void loadMediaSets(MediaFeed feed) {
+		Log.d(TAG, "loadMediaSets");
 		MediaSet set = null;
 		set = feed.addMediaSet(0, this); // Create dummy set.
         set.mName = "所有应用";
