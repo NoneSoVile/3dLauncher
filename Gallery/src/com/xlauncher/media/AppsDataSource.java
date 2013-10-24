@@ -7,6 +7,7 @@ import java.util.List;
 import com.xlauncher.app.App;
 import com.xlauncher.app.Res;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -21,10 +22,12 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 
-public class AppsDataSource implements DataSource {
+public class AppsDataSource extends BroadcastReceiver implements DataSource {
 	private static final String TAG = "AppsDataSource";
 	private Context mContext;
 	private PackageManager mPackageManager;
+	private List<ResolveInfo> apps;
+	private MediaFeed mMediaFeed;
 
 	public AppsDataSource(final Context context) {
 		mContext = context;
@@ -33,11 +36,22 @@ public class AppsDataSource implements DataSource {
 	@Override
 	public void loadMediaSets(MediaFeed feed) {
 		Log.d(TAG, "loadMediaSets");
+		mMediaFeed = feed;
+		final PackageManager packageManager = mPackageManager = mContext
+				.getPackageManager();
+		if(apps != null){
+			apps.clear();
+		}		
+		apps = null;
+		final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+		mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+		apps = packageManager.queryIntentActivities(mainIntent, 0);
+		
 		MediaSet set = null;
 		set = feed.addMediaSet(0, this); // Create dummy set.
         set.mName = "所有应用";
         set.mId = 0;
-        set.setNumExpectedItems(1);
+        set.setNumExpectedItems(apps.size());
         set.generateTitle(true);
         set.mPicasaAlbumId = Shared.INVALID;
         
@@ -47,26 +61,26 @@ public class AppsDataSource implements DataSource {
         set.setNumExpectedItems(1);
         set.generateTitle(true);
         set.mPicasaAlbumId = Shared.INVALID;
+        
+
 	}
 
 	@Override
 	public void loadItemsForSet(MediaFeed feed, MediaSet parentSet,
 			int rangeStart, int rangeEnd) {
-		if (parentSet.mNumItemsLoaded > 0) {
+		if (parentSet.mNumItemsLoaded == parentSet.getNumExpectedItems()) {
 			Log.d(TAG, "loadItemsForSet return");
 			return;
 		}
-		final PackageManager packageManager = mPackageManager = mContext
-				.getPackageManager();
-		List<ResolveInfo> apps = null;
-		final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-		mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-		apps = packageManager.queryIntentActivities(mainIntent, 0);
+		
 		int size = apps.size();
 		if(parentSet.mId == 1)
 			size /= 10;
+		
 		Log.d(TAG, "loadItemsForSet apps total = " + size);
-		for (int i = 0; i < size; i++) {
+		Log.d(TAG, "rangeStart = " + rangeStart + " rangeEnd = " + rangeEnd);
+		rangeEnd = FloatUtils.clamp(rangeEnd, 0, size);
+		for (int i = rangeStart; i < rangeEnd; i++) {
 			ResolveInfo info = apps.get(i);
 			MediaItem item = new MediaItem();
 			item.mId = i;
@@ -83,11 +97,9 @@ public class AppsDataSource implements DataSource {
 							| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
 			item.setMediaType(MediaItem.MEDIA_TYPE_IMAGE);
-
 			feed.addItemToMediaSet(item, parentSet);
-
 		}
-		parentSet.updateNumExpectedItems();
+		//parentSet.updateNumExpectedItems();
 		parentSet.generateTitle(true);
 
 	}
@@ -150,7 +162,7 @@ public class AppsDataSource implements DataSource {
         Drawable d;
         try
         {
-            d = resources.getDrawableForDensity(iconId, App.PIXEL_DENSITY_DPI);
+            d = resources.getDrawable(iconId);
             //resources.getdr
         }
         catch (Resources.NotFoundException e)
@@ -167,8 +179,10 @@ public class AppsDataSource implements DataSource {
     
     public Drawable getFullResDefaultActivityIcon()
     {
+//        return getFullResIcon(Resources.getSystem(),
+//                android.R.mipmap.sym_def_app_icon);
         return getFullResIcon(Resources.getSystem(),
-                android.R.mipmap.sym_def_app_icon);
+                android.R.drawable.sym_action_email);
     }
 
 	@Override
@@ -200,6 +214,22 @@ public class AppsDataSource implements DataSource {
 	public void refresh(MediaFeed feed, String[] databaseUris) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onReceive(Context arg0, Intent intent) {
+		Log.d(TAG, "onReceive");
+		final String action = intent.getAction();
+		 if (Intent.ACTION_PACKAGE_CHANGED.equals(action)
+	                || Intent.ACTION_PACKAGE_REMOVED.equals(action)
+	                || Intent.ACTION_PACKAGE_ADDED.equals(action))
+	        {
+			 Log.d(TAG, "onReceive ACTION_PACKAGE_CHANGED");
+			 	if(mContext != null && mContext instanceof Gallery){
+			 		((Gallery)(mContext)).sendInitialMessage();
+			 	}
+	        }
+		
 	}
 
 }

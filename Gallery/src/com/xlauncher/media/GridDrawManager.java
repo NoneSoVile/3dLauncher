@@ -141,10 +141,10 @@ public final class GridDrawManager {
         int drawnCounter = 0;
         final GridQuad grid = GridDrawables.sGrid;
         grid.bindArrays(gl);
-
         gl.glDepthFunc(GL10.GL_ALWAYS);
         
         int numTexturesQueued = 0;
+        int middle = (firstVisibleSlot + lastVisibleSlot) / 2;
         Context context = view.getContext();
         for (int itrSlotIndex = firstBufferedVisibleSlot; itrSlotIndex <= lastBufferedVisibleSlot; ++itrSlotIndex) {
             int index = itrSlotIndex;

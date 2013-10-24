@@ -254,6 +254,7 @@ public final class MediaFeed implements Runnable {
     }
 
     public void performOperation(final int operation, final ArrayList<MediaBucket> mediaBuckets, final Object data) {
+    	/*
         int numBuckets = mediaBuckets.size();
         final ArrayList<MediaBucket> copyMediaBuckets = new ArrayList<MediaBucket>(numBuckets);
         final GridLayer mGridLayer = ((Gallery) mContext).getGridLayer();
@@ -314,6 +315,7 @@ public final class MediaFeed implements Runnable {
         });
         operationThread.setName("Operation " + operation);
         operationThread.start();
+        */
     }
 
     public void removeMediaSet(MediaSet set) {
@@ -680,6 +682,7 @@ public final class MediaFeed implements Runnable {
                         }
                     }
                     if (expandedSetIndex != Shared.INVALID) {
+                    	Log.d(TAG, "expandedSetIndex != Shared.INVALID");
                         int numSets = mMediaSets.size();
                         for (int i = 0; i < numSets; ++i) {
                             // Purge other sets.
@@ -697,6 +700,7 @@ public final class MediaFeed implements Runnable {
                         // Make sure all the items are loaded for the album.
                         int numItemsLoaded = mediaSets.get(expandedSetIndex).mNumItemsLoaded;
                         int requestedItems = mVisibleRange.end;
+                        Log.d(TAG, "numItemsLoaded = " + numItemsLoaded);
                         // requestedItems count changes in clustering mode.
                         if (mInClusteringMode && mClusterSets != null) {
                             requestedItems = 0;
@@ -710,6 +714,7 @@ public final class MediaFeed implements Runnable {
                             }
                         }
                         MediaSet set = mediaSets.get(expandedSetIndex);
+                        Log.d(TAG, "getNumExpectedItems = " + set.getNumExpectedItems()); 
                         if (numItemsLoaded < set.getNumExpectedItems()) {
                             // We perform calculations for a window that gets
                             // anchored to a multiple of NUM_ITEMS_LOOKAHEAD.
