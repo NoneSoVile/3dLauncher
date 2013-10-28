@@ -40,7 +40,7 @@ public final class GridCamera {
     // To tilt the wall.
     public float mEyeOffsetX;
     public float mEyeOffsetY;
-    private float mEyeEdgeOffsetX;
+    public float mEyeEdgeOffsetX;
     private float mEyeEdgeOffsetXAnim;
     private float mAmountExceeding;
 

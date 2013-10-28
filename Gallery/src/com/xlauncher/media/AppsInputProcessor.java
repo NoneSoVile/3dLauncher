@@ -297,10 +297,12 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 				mCurrentFocusIsPressed = true;
 			} else if (keyCode == KeyEvent.KEYCODE_MENU
 					&& mCurrentFocusSlot != Shared.INVALID) {
+				/*
 				if (layer.getHud().getMode() == HudLayer.MODE_NORMAL)
 					layer.enterSelectionMode();
 				else
 					layer.deselectAll();
+					*/
 			} else if (mCurrentFocusSlot == Shared.INVALID) {
 				mCurrentFocusSlot = anchorSlot;
 			} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
@@ -439,7 +441,7 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 			}
 			if (layer.getZoomValue() == 1.0f) {
 				if (camera.computeConstraints(false,
-						true,   //(layer.getState() != AppsLayer.STATE_FULL_SCREEN)
+						(layer.getState() != AppsLayer.STATE_SHOW_STUDIO),
 						firstPosition, lastPosition)) {
 					deltaX = 0.0f;
 					// vibrate
@@ -801,7 +803,7 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 				if (item.getMediaType() == MediaItem.MEDIA_TYPE_VIDEO) {
 					Utils.playVideo(mContext, item);
 					Log.d(TAG, "selectSlot MEDIA_TYPE_VIDEO");
-				} else {
+				} else{
 					/*
 					mCurrentSelectedSlot = slotId;
 					layer.endSlideshow();
@@ -812,8 +814,10 @@ public class AppsInputProcessor implements GestureDetector.OnGestureListener,
 							mCurrentSelectedSlot + 1,
 							layer.getCompleteRange().end + 1);
 							*/
+							
+					
 					startActivityForResultSafely(item.intent, 0);
-					Log.d(TAG, "selectSlot setState STATE_FULL_SCREEN");
+					//Log.d(TAG, "selectSlot setState STATE_FULL_SCREEN");
 				}
 			}
 		}

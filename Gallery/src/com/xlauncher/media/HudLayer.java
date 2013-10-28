@@ -469,7 +469,7 @@ public final class HudLayer extends Layer {
 
     private void computeSizeForPathbar() {
         float pathBarWidth = mWidth
-                - ((mGridLayer.getState() == GridLayer.STATE_FULL_SCREEN) ? 32 * App.PIXEL_DENSITY : 120 * App.PIXEL_DENSITY);
+                - ((mGridLayer.getState() == AppsLayer.STATE_FULL_SCREEN) ? 32 * App.PIXEL_DENSITY : 120 * App.PIXEL_DENSITY);
         mPathBar.setSize(pathBarWidth, FloatMath.ceil(39 * App.PIXEL_DENSITY));
         mPathBar.recomputeComponents();
     }
@@ -488,8 +488,8 @@ public final class HudLayer extends Layer {
         final int state = mGridLayer.getState();
         // Show the selection menu in selection mode.
         final boolean selectionMode = mMode == MODE_SELECT;
-        final boolean fullscreenMode = state == GridLayer.STATE_FULL_SCREEN;
-        final boolean stackMode = state == GridLayer.STATE_MEDIA_SETS || state == GridLayer.STATE_TIMELINE;
+        final boolean fullscreenMode = state == AppsLayer.STATE_FULL_SCREEN;
+        final boolean stackMode = state == AppsLayer.STATE_MEDIA_SETS || state == AppsLayer.STATE_TIMELINE;
         mSelectionMenuTop.setHidden(!selectionMode || fullscreenMode);
         mSelectionMenuBottom.setHidden(!selectionMode);
         mFullscreenMenu.setHidden(!fullscreenMode || selectionMode);
@@ -513,7 +513,7 @@ public final class HudLayer extends Layer {
         final ImageButton topRightButton = mTopRightButton;
         int height = (int) (94 * App.PIXEL_DENSITY);
         switch (state) {
-        case GridLayer.STATE_MEDIA_SETS:
+        case AppsLayer.STATE_MEDIA_SETS:
             image = CAMERA_BUTTON_ICON;
             pressedImage = CAMERA_BUTTON_ICON_PRESSED;
             action = mCameraButtonAction;

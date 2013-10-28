@@ -316,7 +316,7 @@ public final class DisplayItem {
             mPerformingScale = true;
             float spanDelta = span - mSpan;
             float maxSlots = mItemRef.mParentMediaSet.getNumExpectedItems();
-            maxSlots = FloatUtils.clamp(maxSlots, 0, GridLayer.MAX_ITEMS_PER_SLOT);
+            maxSlots = FloatUtils.clamp(maxSlots, 0, AppsLayer.MAX_ITEMS_PER_SLOT);
             if (Math.abs(spanDelta) < 10 * App.PIXEL_DENSITY) {
                 // almost the same span
                 mStartOffset += (mSpanDirection * mSpanSpeed);

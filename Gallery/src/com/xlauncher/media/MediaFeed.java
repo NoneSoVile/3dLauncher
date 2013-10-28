@@ -41,7 +41,7 @@ public final class MediaFeed implements Runnable {
     public static final int OPERATION_ROTATE = 1;
     public static final int OPERATION_CROP = 2;
 
-    private static final int NUM_ITEMS_LOOKAHEAD = 60;
+    private static final int NUM_ITEMS_LOOKAHEAD = 90;
     private static final int NUM_INTERRUPT_RETRIES = 30;
     private static final int JOIN_TIMEOUT = 50;
 

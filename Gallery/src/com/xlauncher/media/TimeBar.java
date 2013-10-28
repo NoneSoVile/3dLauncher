@@ -204,7 +204,7 @@ public final class TimeBar extends Layer implements MediaFeed.Listener {
             int increment = 12;
             MediaSet set = null;
             mShowTime = true;
-            if (mState == GridLayer.STATE_GRID_VIEW) {
+            if (mState == AppsLayer.STATE_GRID_VIEW) {
                 set = feed.getFilteredSet();
                 if (set == null) {
                     set = feed.getCurrentSet();

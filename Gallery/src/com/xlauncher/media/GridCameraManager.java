@@ -55,7 +55,7 @@ public final class GridCameraManager {
                     GridCameraManager.getSlotPositionForSlotIndex(slotIndex, camera, layout, deltaAnchorPosition, position);
                     position.x = (zoomValue == 1.0f) ? ((position.x) * camera.mOneByScale) : camera.mLookAtX;
                     position.y = (zoomValue == 1.0f) ? 0 : camera.mLookAtY;
-                    if (state == GridLayer.STATE_MEDIA_SETS || state == GridLayer.STATE_TIMELINE) {
+                    if (state == AppsLayer.STATE_MEDIA_SETS || state == AppsLayer.STATE_TIMELINE) {
                         position.y = -0.1f;
                     }
                     float width = camera.mItemWidth;
@@ -161,7 +161,7 @@ public final class GridCameraManager {
         float maxIncrement = camera.mWidth * 0.5f + itemWidth;
         float left = -maxIncrement + offset;
         float right = left + 2.0f * maxIncrement;
-        if (state == GridLayer.STATE_MEDIA_SETS || state == GridLayer.STATE_TIMELINE) {
+        if (state == AppsLayer.STATE_MEDIA_SETS || state == AppsLayer.STATE_TIMELINE) {
             right += (itemWidth * 0.5f);
         }
         float top = -maxIncrement;
@@ -226,8 +226,8 @@ public final class GridCameraManager {
             if (lastVisibleSlotIndex >= numSlots)
                 lastVisibleSlotIndex = numSlots - 1;
 
-            while (((lastVisibleSlotIndex - firstVisibleSlotIndex) * GridLayer.MAX_ITEMS_PER_SLOT
-                        + GridLayer.MAX_DISPLAYED_ITEMS_PER_SLOT - 1) > GridLayer.MAX_ITEMS_DRAWABLE) {
+            while (((lastVisibleSlotIndex - firstVisibleSlotIndex) * AppsLayer.MAX_ITEMS_PER_SLOT
+                        + AppsLayer.MAX_DISPLAYED_ITEMS_PER_SLOT - 1) > AppsLayer.MAX_ITEMS_DRAWABLE) {
                 lastVisibleSlotIndex--;
             }
 
@@ -248,8 +248,8 @@ public final class GridCameraManager {
                 lastVisibleSlotIndex = numSlots - 1;
             }
 
-            while (((lastVisibleSlotIndex - firstVisibleSlotIndex) * GridLayer.MAX_ITEMS_PER_SLOT
-                        + GridLayer.MAX_DISPLAYED_ITEMS_PER_SLOT - 1) > GridLayer.MAX_ITEMS_DRAWABLE) {
+            while (((lastVisibleSlotIndex - firstVisibleSlotIndex) * AppsLayer.MAX_ITEMS_PER_SLOT
+                        + AppsLayer.MAX_DISPLAYED_ITEMS_PER_SLOT - 1) > AppsLayer.MAX_ITEMS_DRAWABLE) {
                 lastVisibleSlotIndex--;
             }
 

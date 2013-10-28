@@ -62,6 +62,22 @@ public class AppsDataSource extends BroadcastReceiver implements DataSource {
         set.generateTitle(true);
         set.mPicasaAlbumId = Shared.INVALID;
         
+        ////////// to do
+		set = feed.addMediaSet(2, this); // Create dummy set.
+        set.mName = "无聊游戏";
+        set.mId = 2;
+        set.setNumExpectedItems(1);
+        set.generateTitle(true);
+        set.mPicasaAlbumId = Shared.INVALID;
+        
+        
+        set = feed.addMediaSet(3, this); // Create dummy set.
+        set.mName = "作者和工作室";
+        set.mId = 3;
+        set.setNumExpectedItems(1);
+        set.generateTitle(true);
+        set.mPicasaAlbumId = Shared.INVALID;
+        
 
 	}
 
@@ -76,11 +92,23 @@ public class AppsDataSource extends BroadcastReceiver implements DataSource {
 		int size = apps.size();
 		if(parentSet.mId == 1)
 			size /= 10;
+		else if(parentSet.mId == 2){
+			size /= 5;
+		}else if(parentSet.mId == 3){
+			MediaItem item = new MediaItem();
+			item.mId = 99999;
+			item.mFilePath = "" + item.mId;
+			item.drawable = mContext.getResources().getDrawable(R.drawable.company_intro);
+			item.iconID = R.drawable.company_intro;
+			size = 0;
+			item.setMediaType(MediaItem.MEDIA_TYPE_IMAGE);
+			feed.addItemToMediaSet(item, parentSet);
+		}
 		
 		Log.d(TAG, "loadItemsForSet apps total = " + size);
 		Log.d(TAG, "rangeStart = " + rangeStart + " rangeEnd = " + rangeEnd);
 		rangeEnd = FloatUtils.clamp(rangeEnd, 0, size);
-		for (int i = rangeStart; i < rangeEnd; i++) {
+		for (int i = 0; i < size; i++) {
 			ResolveInfo info = apps.get(i);
 			MediaItem item = new MediaItem();
 			item.mId = i;
@@ -99,7 +127,7 @@ public class AppsDataSource extends BroadcastReceiver implements DataSource {
 			item.setMediaType(MediaItem.MEDIA_TYPE_IMAGE);
 			feed.addItemToMediaSet(item, parentSet);
 		}
-		//parentSet.updateNumExpectedItems();
+		parentSet.updateNumExpectedItems();
 		parentSet.generateTitle(true);
 
 	}

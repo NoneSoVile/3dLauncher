@@ -64,6 +64,7 @@ public final class GridDrawManager {
     private float mSpreadValue;
     private ScaleGestureDetector mScaleGestureDetector;
     private boolean mHoldPosition;
+	private AppsLayer mAppsLayer;
 
     private static final Comparator<DisplayItem> sDisplayItemComparator = new Comparator<DisplayItem>() {
         public int compare(DisplayItem a, DisplayItem b) {
@@ -83,7 +84,7 @@ public final class GridDrawManager {
 	private static final String TAG = "GridDrawManager";
 
     public GridDrawManager(Context context, GridCamera camera, GridDrawables drawables, DisplayList displayList,
-            DisplayItem[] displayItems, DisplaySlot[] displaySlots) {
+            DisplayItem[] displayItems, DisplaySlot[] displaySlots, AppsLayer appsLayer) {
         sThumbnailConfig.thumbnailWidth = 128;
         sThumbnailConfig.thumbnailHeight = 96;
         mDisplayItems = displayItems;
@@ -99,6 +100,7 @@ public final class GridDrawManager {
         stc.sizeMode = StringTexture.Config.SIZE_EXACT;
         stc.overflowMode = StringTexture.Config.OVERFLOW_FADE;
         mNoItemsTexture = new StringTexture(context.getResources().getString(Res.string.no_items), stc);
+        mAppsLayer = appsLayer;
 
     }
 
@@ -277,8 +279,23 @@ public final class GridDrawManager {
                             }
                             continue;
                         }
+                        float dec = mAppsLayer.getScrollPosition()/260;
+                        float theta = 0;
+                        if(dec == 0){
+                        	dec = 1;
+                        }else if(mAppsLayer.getState() != AppsLayer.STATE_MEDIA_SETS && 
+                        		mAppsLayer.getState() != AppsLayer.STATE_FULL_SCREEN &&
+                        		mAppsLayer.getState() != AppsLayer.STATE_SHOW_STUDIO){
+                        	theta = 20 *(float) Math.sin((double)(mAppsLayer.getScrollPosition()/200))/dec;
+                        }
+                        GridLayoutInterface layout = mAppsLayer.getLayoutInterface();
+                        if(index/(layout.mNumRows*4)%2 != 0){
+                        	theta = -theta;
+                        }
+                        gl.glRotatef(theta, -5, 140, 0);
                         drawDisplayItem(view, gl, displayItem, texture, PASS_THUMBNAIL_CONTENT, null,
                                 displayItem.mAnimatedPlaceholderFade);
+                        gl.glRotatef(-theta, -5, 140, 0);
                     } else {
                         // Move on to the next stack.
                         break;
@@ -589,7 +606,23 @@ public final class GridDrawManager {
                             if (i < firstVisibleSlot || i > lastVisibleSlot) {
                                 continue;
                             }
+                            float dec = mAppsLayer.getScrollPosition()/260;
+                            float theta = 0;
+                            if(dec == 0){
+                            	dec = 1;
+                            }else if(mAppsLayer.getState() != AppsLayer.STATE_MEDIA_SETS &&
+                            		mAppsLayer.getState() != AppsLayer.STATE_FULL_SCREEN &&
+                            		mAppsLayer.getState() != AppsLayer.STATE_SHOW_STUDIO){
+                            	theta = 20 *(float) Math.sin((double)(mAppsLayer.getScrollPosition()/200))/dec;
+                            }
+                            
+                            GridLayoutInterface layout = mAppsLayer.getLayoutInterface();
+                            if(i/(layout.mNumRows*4)%2 != 0){
+                            	theta = -theta;
+                            }
+                            gl.glRotatef(theta, -5, 140, 0);
                             drawDisplayItem(view, gl, displayItem, textureString, PASS_TEXT_LABEL, null, 0);
+                            gl.glRotatef(-theta, -5, 140, 0);
                         }
                     }
                 }
@@ -617,7 +650,7 @@ public final class GridDrawManager {
                         DisplaySlot displaySlot = displaySlots[i - firstBufferedVisibleSlot];
                         StringTexture textureString = displaySlot.getLocationImage(reverseGeocoder, stringTextureTable);
                         if (textureString != null) {
-                            view.loadTexture(textureString);
+                            view.loadTexture(textureString);                           
                             drawDisplayItem(view, gl, displayItem, textureString, PASS_TEXT_LABEL, null, 0);
                         }
                     }
@@ -712,7 +745,7 @@ public final class GridDrawManager {
     private void drawDisplayItem(RenderView view, GL11 gl, DisplayItem displayItem, Texture texture, int pass,
             Texture previousTexture, float mixRatio) {
         GridCamera camera = mCamera;
-        Vector3f animatedPosition = displayItem.mAnimatedPosition;
+        Vector3f animatedPosition = displayItem.mAnimatedPosition;//13715189345
         float translateXf = animatedPosition.x * camera.mOneByScale;
         float translateYf = animatedPosition.y * camera.mOneByScale;
         float translateZf = -animatedPosition.z;

@@ -28,6 +28,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
     public static final int STATE_FULL_SCREEN = 2;
     public static final int STATE_TIMELINE = 3;
     public static final int STATE_PAGE_GRID_VIEW = 4;
+    public static final int STATE_SHOW_STUDIO = 5;
 
     public static final int ANCHOR_LEFT = 0;
     public static final int ANCHOR_RIGHT = 1;
@@ -165,7 +166,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
                 });
         
         mCameraManager = new GridCameraManager(mCamera);
-        mDrawManager = new GridDrawManager(context, mCamera, mDrawables, mDisplayList, mDisplayItems, mDisplaySlots);
+        mDrawManager = new GridDrawManager(context, mCamera, mDrawables, mDisplayList, mDisplayItems, mDisplaySlots, this);
         mInputProcessor = new AppsInputProcessor(context, mCamera, this, mView, mTempVec, mDisplayItems);
         //setState(STATE_MEDIA_SETS);
 
@@ -359,6 +360,11 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	                mHud.getPathBar().popLabel();
 	            }
 	        	break;
+	        case STATE_SHOW_STUDIO:
+	            layoutInterface.mNumRows = 1;
+	            layoutInterface.mSpacingX = (int) (40 * App.PIXEL_DENSITY);
+	            layoutInterface.mSpacingY = (int) (40 * App.PIXEL_DENSITY);
+	        	break;
 	        }
 	        mState = state;
 	        mHud.onGridStateChanged();
@@ -413,13 +419,15 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	        }
 	        switch (state) {
 	        case STATE_GRID_VIEW:
-	            //setState(STATE_MEDIA_SETS);
+	        case STATE_PAGE_GRID_VIEW:
+	        case STATE_SHOW_STUDIO:
+	            setState(STATE_MEDIA_SETS);
 	            break;
 	        case STATE_TIMELINE:
 	            setState(STATE_GRID_VIEW);
 	            break;
 	        case STATE_FULL_SCREEN:
-	            setState(STATE_GRID_VIEW);
+	            setState(STATE_MEDIA_SETS);
 	            mInputProcessor.clearSelection();
 	            break;
 	        default:
@@ -657,8 +665,11 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	                deltaAnchorPosition.set(mDeltaAnchorPosition);
 	                LayoutInterface layout = mLayoutInterface;
 	                GridCamera camera = mCamera;
+	                Log.d(TAG, "computeVisibleItems");
 	                for (int i = firstVisibleSlotIndex; i <= lastVisibleSlotIndex; ++i) {
 	                    GridCameraManager.getSlotPositionForSlotIndex(i, camera, layout, deltaAnchorPosition, position);
+	                    Log.d(TAG, "deltaAnchorPosition.x = " + deltaAnchorPosition.x + "  deltaAnchorPosition.y = " + deltaAnchorPosition.y);
+	                    Log.d(TAG, "position.x = " + position.x + " position.y = " + position.y);
 	                    MediaSet set = feed.getSetForSlot(i);
 	                    int indexIntoSlots = i - firstVisibleSlotIndex;
 
@@ -833,6 +844,9 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	            gl.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
 	            view.setAlpha(mSelectedAlpha);
 	        }
+	        if(mState == STATE_SHOW_STUDIO){
+	        	selectedSlotIndex = 0;
+	        }
 	        if (selectedSlotIndex != Shared.INVALID) {
 	            mTargetAlpha = 0.0f;
 	        } else {
@@ -861,16 +875,24 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	        // We draw the placeholder for all visible slots.
 	        if (mHud != null && mDrawManager != null) {
 	            if (mMediaFeed != null) {
-	            	mDrawManager.drawThumbnails(view, gl, mState);
-	            	int selectedSlotIndex = mInputProcessor.getCurrentSelectedSlot();
-	            	 if (selectedSlotIndex != Shared.INVALID) {
-	     	            mDrawManager.drawFocusItems(view, gl, mZoomValue, mSlideshowMode, mTimeElapsedSinceView);
-	     	            mCurrentFocusItemWidth = mDrawManager.getFocusQuadWidth();
-	     	            mCurrentFocusItemHeight = mDrawManager.getFocusQuadHeight();
-	     	        }
-	                mDrawManager.drawBlendedComponents(view, gl, mSelectedAlpha, mState, mHud.getMode(),
-	                        mTimeElapsedSinceStackViewReady, mTimeElapsedSinceGridViewReady, mSelectedBucketList, mMarkedBucketList,
-	                        mMediaFeed.getWaitingForMediaScanner() || mFeedAboutToChange || mMediaFeed.isLoading());
+	            	if(mState == STATE_SHOW_STUDIO){
+		     	            mDrawManager.drawFocusItems(view, gl, 3.0f, mSlideshowMode, mTimeElapsedSinceView);
+		     	            mCurrentFocusItemWidth = mDrawManager.getFocusQuadWidth();
+		     	            mCurrentFocusItemHeight = mDrawManager.getFocusQuadHeight();
+
+	            	}
+	            	else{
+	            		mDrawManager.drawThumbnails(view, gl, mState);
+		            	int selectedSlotIndex = mInputProcessor.getCurrentSelectedSlot();
+		            	 if (selectedSlotIndex != Shared.INVALID) {
+		     	            mDrawManager.drawFocusItems(view, gl, mZoomValue, mSlideshowMode, mTimeElapsedSinceView);
+		     	            mCurrentFocusItemWidth = mDrawManager.getFocusQuadWidth();
+		     	            mCurrentFocusItemHeight = mDrawManager.getFocusQuadHeight();
+		     	        }
+		                mDrawManager.drawBlendedComponents(view, gl, mSelectedAlpha, mState, mHud.getMode(),
+		                        mTimeElapsedSinceStackViewReady, mTimeElapsedSinceGridViewReady, mSelectedBucketList, mMarkedBucketList,
+		                        mMediaFeed.getWaitingForMediaScanner() || mFeedAboutToChange || mMediaFeed.isLoading());
+	            	}	            	
 	            }
 	        }
 	    }
@@ -972,9 +994,9 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	        int currentlyVisibleSlotIndex = getAnchorSlotIndex(ANCHOR_CENTER);
 	        int numVisibleItems = mVisibleRange.end - mVisibleRange.begin + 1;
 	        if (mState == STATE_MEDIA_SETS && currentlyVisibleSlotIndex < numVisibleItems) {
-	            currentlyVisibleSlotIndex = getAnchorSlotIndex(ANCHOR_LEFT);
-	            mMediaFeed.expandMediaSet(0);
-	            setState(STATE_GRID_VIEW);
+//	            currentlyVisibleSlotIndex = getAnchorSlotIndex(ANCHOR_LEFT);
+//	            mMediaFeed.expandMediaSet(0);
+//	            setState(STATE_GRID_VIEW);
 	        }
 	        if (mCurrentExpandedSlot != Shared.INVALID) {
 	            currentlyVisibleSlotIndex = mCurrentExpandedSlot;
@@ -1240,7 +1262,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	    }
 
 	    public void afterDeleteReflush() {
-	        if (getState() == GridLayer.STATE_GRID_VIEW && mMediaFeed.getCurrentSet() != null &&
+	        if (getState() == AppsLayer.STATE_GRID_VIEW && mMediaFeed.getCurrentSet() != null &&
 	                       (mBufferedVisibleRange.end - mBufferedVisibleRange.begin) >
 	                                mMediaFeed.getCurrentSet().getNumItems() - 1 &&
 	                                mMediaFeed.getCurrentSet().getNumItems() >= 1 &&
@@ -1263,7 +1285,7 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	            }
 	        }
 
-	        if(getState() == GridLayer.STATE_MEDIA_SETS) {
+	        if(getState() == AppsLayer.STATE_MEDIA_SETS) {
 	            mBufferedVisibleRange.set(0, 0);
 	            mVisibleRange.set(0, 0);
 	            onFeedChanged(mMediaFeed, true);
@@ -1324,11 +1346,24 @@ public class AppsLayer extends RootLayer implements MediaFeed.Listener, TimeBar.
 	            // It is not clustering.
 	            if (!feed.hasExpandedMediaSet()) {
 	                if (feed.canExpandSet(slotIndex)) {
-	                    mCurrentExpandedSlot = slotIndex;
-	                    feed.expandMediaSet(slotIndex);
-	                    setState(STATE_GRID_VIEW);
+	                	if(slotIndex == 3){
+	                		mCurrentExpandedSlot = slotIndex;
+		                    feed.expandMediaSet(slotIndex);
+	                		//mState = STATE_SHOW_STUDIO;
+							mCamera.mConvergenceSpeed = 2.0f;
+							mCamera.mFriction = 0.0f;
+		                    setState(STATE_SHOW_STUDIO);
+		                    mInputProcessor.setCurrentFocusSlot(0);
+		                    centerCameraForSlot(0, 1.0f);		                    
+		                    return true;
+	                	}else{
+	                		mCurrentExpandedSlot = slotIndex;
+		                    feed.expandMediaSet(slotIndex);
+		                    setState(STATE_GRID_VIEW);
+	                	}	                    
 	                }
-	                return false;
+	                
+	                return  false;
 	            } else {
 	                return true;
 	            }
